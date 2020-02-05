@@ -105,9 +105,11 @@ $generator = new MapGenerator\PerlinNoiseGenerator();
 
 clearScreen();
 $l=0;
+$loopTimer = max(0, min($argv[1] ?? 3, 100));
+$lineDrawMs = max(0, min($argv[2] ?? 50, 1000));
 while (1) {
     $size = getSize();
-    $h = (int)$size[0];
+    $h = (int)$size[0] * 5;
     $w = (int)$size[1];
 
     $generator->setPersistence(.5); //map roughness
@@ -127,15 +129,15 @@ while (1) {
             $colored = getCliColorFromFloat($r, $ascii);
             $scr .= $colored;
             $line .= $colored;
-            echo "$colored";
-            usleep(100);
+            #echo "$colored";
+            #usleep(100);
         }
         $scr .= "\n";
-        #echo "$line" . ($i < $h-1 ? "\n" : "");
+        echo "$line";
+        usleep($lineDrawMs * 1000);
         echo  ($i < $h-1 ? "\n" : "");
-        #usleep(50 * 1000);
     }
-    sleep(3);
+    sleep($loopTimer);
 
     #echo trim($scr);
     setCursor(0, 0);
