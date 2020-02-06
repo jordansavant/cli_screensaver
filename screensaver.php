@@ -1,6 +1,7 @@
 <?php
 
-include "perlin.php";
+include "perlinMine.php";
+include "perlinTheirs.php";
 
 function getSize() {
     return array_map("trim", explode(" ", shell_exec("stty size")));
@@ -116,22 +117,35 @@ $mode = $mode == '16' ? '16' : '256';
 $loopTimer = max(0, min($argv[2] ?? 3, 100));
 $lineDrawMs = max(0, min($argv[3] ?? 50, 1000));
 while (1) {
+
+    $perlinType = $l % 2 == 0 ? "mine" : "theirs";
+
     $size = getSize();
     $h = (int)$size[0] *  ($mode == 16 ? 5 : 1 );
     $w = (int)$size[1];
 
-    $generator->setPersistence(.5); //map roughness
-    $generator->setSize(max($w, $h)); //heightmap size: 100x100
-    $generator->setMapSeed(microtime(true));
-    $map = $generator->generate();
-    list($min, $max) = getMinMax($map);
+    # randomize the perlin noise type for fun
+    if ($perlinType == "mine") {
+        $perlin = new PerlinMap2D(max($w, $h), 70);
+        $min = 0; $max = 1;
+    } else {
+        $generator->setPersistence(.5); //map roughness
+        $generator->setSize(max($w, $h)); //heightmap size: 100x100
+        $generator->setMapSeed(microtime(true));
+        $map = $generator->generate();
+        list($min, $max) = getMinMax($map);
+    }
 
     // write random characters for size
 	$scr = '';
     for ($i=0; $i<$h; $i++) {
         $line = '';
         for ($j=0; $j<$w; $j++) {
-            $m = $map[$i][$j];
+            if ($perlinType == 'mine') {
+                $m = $perlin->getValueAtPoint($i, $j);
+            } else {
+                $m = $map[$i][$j];
+            }
             $r = getRatio($m, $min, $max); // float
             $ascii = getAsciiFromFloat($r);
             if ($mode == '256')
