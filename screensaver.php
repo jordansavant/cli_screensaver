@@ -77,12 +77,18 @@ $fgColors = [
     //42,
     //47
 ];
-function getCliColorFromFloat($r, $ascii) {
+function get16ColorFromFloat($r, $ascii) {
     global $fgColors;
     $range = count($fgColors) - 1;
     $index = (int)($range * $r);
     $c = $fgColors[$index];
     return "\033[${c}m${ascii}\033[0m";
+}
+
+function get256ColorFromFloat($r, $ascii) {
+    $range = 255;
+    $color = (int)($range * $r);
+    return "\033[38;5;${color}m${ascii}\033[0m";
 }
 
 function getRatio($val, $min, $max) {
@@ -105,11 +111,13 @@ $generator = new MapGenerator\PerlinNoiseGenerator();
 
 clearScreen();
 $l=0;
-$loopTimer = max(0, min($argv[1] ?? 3, 100));
-$lineDrawMs = max(0, min($argv[2] ?? 50, 1000));
+$mode = $argv[1] ?? null;
+$mode = $mode == '16' ? '16' : '256';
+$loopTimer = max(0, min($argv[2] ?? 3, 100));
+$lineDrawMs = max(0, min($argv[3] ?? 50, 1000));
 while (1) {
     $size = getSize();
-    $h = (int)$size[0] * 5;
+    $h = (int)$size[0] *  ($mode == 16 ? 5 : 1 );
     $w = (int)$size[1];
 
     $generator->setPersistence(.5); //map roughness
@@ -126,7 +134,10 @@ while (1) {
             $m = $map[$i][$j];
             $r = getRatio($m, $min, $max); // float
             $ascii = getAsciiFromFloat($r);
-            $colored = getCliColorFromFloat($r, $ascii);
+            if ($mode == '256')
+                $colored = get256ColorFromFloat($r, $ascii);
+            else
+                $colored = get16ColorFromFloat($r, $ascii);
             $scr .= $colored;
             $line .= $colored;
             #echo "$colored";
