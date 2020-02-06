@@ -114,8 +114,3 @@ class PerlinMap2D
 
 }
 
-# TEST
-$map = new PerlinMap2D(100, 10, '123');
-
-$val = $map->getValueAtPoint(1, 1);
-
