@@ -30,18 +30,25 @@ function getMinMax($map) {
     return [$min, $max];
 }
 
-$asciiTopo = [];
-for ($i=33; $i<126; $i++) {
-    $asciiTopo[] = chr($i);
-}
-shuffle($asciiTopo);
+$asciiTopo = [
+    ' ', '.', '!', '/', ';', '\\',
+    ':', ',', '=',
+    'a', 'b', 'c', 'd', 'e', 'f',
+    'g', 'h', 'i', 'j', 'k', 'l',
+    'm', 'n', 'o', 'p', 'q', 'r',
+    's', 't', 'u', 'v', 'w', 'x',
+    'y', 'z', '$', '%', '@',
+    '{', '}', '[', ']', '-', '+',
+    '*', '(', ')', '<', '>', '?',
+];
+$asciiTopo = array_reverse($asciiTopo);
 
 function getAsciiFromFloat($r) {
-    #global $asciiTopo;
-    #$range = count($asciiTopo) - 1;
-    #$index = (int)($range * $r);
-    #$a = $asciiTopo[$index];
-    #return $a;
+    global $asciiTopo;
+    $range = count($asciiTopo) - 1;
+    $index = (int)($range * $r);
+    $a = $asciiTopo[$index];
+    return $a;
 
     // full ascii
     $range = 126 - 33;
