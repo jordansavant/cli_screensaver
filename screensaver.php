@@ -123,6 +123,7 @@ $mode = $argv[1] ?? null;
 $mode = $mode == '16' ? '16' : '256';
 $loopTimer = max(0, min($argv[2] ?? 3, 100));
 $lineDrawMs = max(0, min($argv[3] ?? 50, 1000));
+$runCount = $argv[4] ?? -1;
 while (1) {
 
     $perlinType = $l % 2 == 0 ? "mine" : "theirs";
@@ -169,9 +170,12 @@ while (1) {
         usleep($lineDrawMs * 1000);
         echo  ($i < $h-1 ? "\n" : "");
     }
-    sleep($loopTimer);
+    $l++;
 
+    if ($runCount > 0 && $l >= $runCount)
+        break;
+
+    sleep($loopTimer);
     #echo trim($scr);
     setCursor(0, 0);
-    $l++;
 }

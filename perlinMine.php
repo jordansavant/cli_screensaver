@@ -14,7 +14,7 @@ class PerlinMap2D
         $this->numericMapSeed = is_numeric($seed)
             ? $seed
             : intval(substr(md5($seed), -8), 16);
-        mt_srand($this->numericMapSeed);
+        mt_srand((int)$this->numericMapSeed);
 
         $this->size = $size;
         $this->rowSize = (int)sqrt($size);
